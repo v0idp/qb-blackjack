@@ -1,6 +1,3 @@
-QBCore = nil
-TriggerEvent('QBCore:GetObject', function(obj) QBCore = obj end)
-
 seatSideAngle = 30
 bet = 0
 hand = {}
