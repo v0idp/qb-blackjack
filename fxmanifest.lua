@@ -4,7 +4,7 @@ game "gta5"
 name 'qb-blackjack'
 description 'Playable Blackjack at the casino, similar to GTAOnline.'
 author 'Xinerki - https://github.com/Xinerki/'
-url 'https://github.com/Xinerki/ACG-blackjack'
+url 'https://github.com/Xinerki/kgv-blackjack'
 
 shared_scripts {
 	'coords.lua',
