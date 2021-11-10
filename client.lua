@@ -10,7 +10,7 @@ local leaveCheckCallback = nil
 local _lambo = nil
 local canSitDownCallback = nil
 
-Citizen.CreateThread(function()
+CreateThread(function()
     while true do
 		sleep = 1000
         local playerCoords = GetEntityCoords(PlayerPedId())
@@ -120,7 +120,7 @@ end
 -- end
 
 function findRotation( x1, y1, x2, y2 )
-    local t = -math.deg( math.atan2( x2 - x1, y2 - y1 ) )
+    local t = -math.deg( math.atan( x2 - x1, y2 - y1 ) )
     return t < -180 and t + 180 or t
 end
 
@@ -266,7 +266,7 @@ renderTime = false
 renderBet = false
 renderHand = false
 
-Citizen.CreateThread(function()
+CreateThread(function()
 
     scaleform = RequestScaleformMovie_2("INSTRUCTIONAL_BUTTONS")
 
@@ -513,7 +513,7 @@ end)
 
 RegisterNetEvent("BLACKJACK:PlayDealerAnim")
 AddEventHandler("BLACKJACK:PlayDealerAnim", function(i, animDict, anim)
-	Citizen.CreateThread(function()
+	CreateThread(function()
 
 		local v = tables[i]
 
@@ -530,7 +530,7 @@ end)
 
 RegisterNetEvent("BLACKJACK:PlayDealerSpeech")
 AddEventHandler("BLACKJACK:PlayDealerSpeech", function(i, speech)
-	Citizen.CreateThread(function()
+	CreateThread(function()
 		DebugPrint("PLAYING SPEECH "..speech:upper().." ON DEALER "..i)
 		StopCurrentPlayingAmbientSpeech(spawnedPeds[i])
 		PlayAmbientSpeech1(spawnedPeds[i], speech, "SPEECH_PARAMS_FORCE_NORMAL_CLEAR")
@@ -558,7 +558,7 @@ selectedBet = 1
 
 RegisterNetEvent("BLACKJACK:PlaceBetChip")
 AddEventHandler("BLACKJACK:PlaceBetChip", function(index, seat, bet, double, split)
-	Citizen.CreateThread(function()
+	CreateThread(function()
 		local chipPile, props = getChips(bet)
 
 		if chipPile then
@@ -659,7 +659,7 @@ AddEventHandler("BLACKJACK:RequestBets", function(index, _timeLeft)
 	timeLeft = _timeLeft
 	if leavingBlackjack == true then leaveBlackjack() return end
 
-	Citizen.CreateThread(function()
+	CreateThread(function()
 		scrollerIndex = index
 		renderScaleform = true
 		renderTime = true
@@ -716,14 +716,14 @@ AddEventHandler("BLACKJACK:RequestBets", function(index, _timeLeft)
 			if not upPressed then
 				if IsControlJustPressed(1, 175) then -- RIGHT ARROW / DPAD RIGHT
 					upPressed = true
-					Citizen.CreateThread(function()
+					CreateThread(function()
 						selectedBet = selectedBet + 1
 						if selectedBet > tableLimit then selectedBet = 1 end
-						Citizen.Wait(175)
+						Wait(175)
 						while IsControlPressed(1, 175) do
 							selectedBet = selectedBet + 1
 							if selectedBet > tableLimit then selectedBet = 1 end
-							Citizen.Wait(125)
+							Wait(125)
 						end
 
 						upPressed = false
@@ -734,14 +734,14 @@ AddEventHandler("BLACKJACK:RequestBets", function(index, _timeLeft)
 			if not downPressed then
 				if IsControlJustPressed(1, 174) then -- LEFT ARROW / DPAD LEFT
 					downPressed = true
-					Citizen.CreateThread(function()
+					CreateThread(function()
 						selectedBet = selectedBet - 1
 						if selectedBet < 1 then selectedBet = tableLimit end
-						Citizen.Wait(175)
+						Wait(175)
 						while IsControlPressed(1, 174) do
 							selectedBet = selectedBet - 1
 							if selectedBet < 1 then selectedBet = tableLimit end
-							Citizen.Wait(125)
+							Wait(125)
 						end
 
 						downPressed = false
@@ -844,7 +844,7 @@ end)
 
 RegisterNetEvent("BLACKJACK:RequestMove")
 AddEventHandler("BLACKJACK:RequestMove", function(_timeLeft)
-	Citizen.CreateThread(function()
+	CreateThread(function()
 		timeLeft = _timeLeft
 		if leavingBlackjack == true then leaveBlackjack() return end
 
@@ -1075,11 +1075,11 @@ end)
 
 RegisterNetEvent("BLACKJACK:GameEndReaction")
 AddEventHandler("BLACKJACK:GameEndReaction", function(result)
-	Citizen.CreateThread(function()
+	CreateThread(function()
 		if #hand == 2 and handValue(hand) == 21 and result == "good" then
 			TriggerEvent('3dme:triggerDisplay', "You have Blackjack!")
 		elseif handValue(hand) > 21 and result ~= "good" then
-			local coordsMe = GetEntityCoords(GetPlayerPed(mePlayer), false)
+			local coordsMe = GetEntityCoords(PlayerPedId(), false)
             local coords = GetEntityCoords(PlayerPedId(), false)
             local dist = Vdist2(coordsMe, coords)
             if dist < 50 then
@@ -1217,10 +1217,10 @@ AddEventHandler("BLACKJACK:GiveCard", function(i, seat, handSize, card, flipped,
 		local x, y, z, w = table.unpack(tables[i].coords)
 		textCoords = {x=x, y=y, z=z}
 		textCoords.z = textCoords.z + 1.5
-		Citizen.CreateThread(function()
+		CreateThread(function()
 			local textCoordsRun = textCoords
 			while #dealerHandObjs[i] >= 1 do
-				Citizen.Wait(4)
+				Wait(4)
 				if #(vector3(textCoordsRun.x, textCoordsRun.y, textCoordsRun.z) - GetEntityCoords(PlayerPedId()))) < 10.0 then
 					-- DrawText3D(textCoordsRun.x, textCoordsRun.y, textCoordsRun.z, handValue(dealerHand[i]))
 				end
@@ -1243,7 +1243,7 @@ function DrawText3Ds(x, y, z, text)
 	ClearDrawOrigin()
 end
 
-Citizen.CreateThread(function()
+CreateThread(function()
 	while true do
 		sleep = 1000
 		local ped = PlayerPedId()
@@ -1398,11 +1398,11 @@ function ProcessTables()
 
 								local endTime = GetGameTimer() + math.floor(GetAnimDuration("anim_casino_b@amb@casino@games@shared@player@", idleVar)*990)
 
-								Citizen.CreateThread(function() -- Disable pause when while in-blackjack
+								CreateThread(function() -- Disable pause when while in-blackjack
 									local startCount = false
 									local count = 0
 									while true do
-										Citizen.Wait(0)
+										Wait(0)
 										SetPauseMenuActive(false)
 
 										if leavingBlackjack == true then
@@ -1499,11 +1499,11 @@ function ProcessTables()
 	end
 end
 
-Citizen.CreateThread(function()
+CreateThread(function()
 	-- if IsModelInCdimage(`vw_prop_casino_blckjack_01`) and IsModelInCdimage(`s_f_y_casino_01`) and IsModelInCdimage(`vw_prop_chip_10dollar_x1`) then
 	if IsModelInCdimage(`vw_prop_casino_3cardpoker_01`) and IsModelInCdimage(`s_f_y_casino_01`) then
-		Citizen.CreateThread(ProcessTables)
-		Citizen.CreateThread(CreatePeds)
+		CreateThread(ProcessTables)
+		CreateThread(CreatePeds)
 	else
 		ThefeedSetAnimpostfxColor(255, 0, 0, 255)
 		Notification("This server is missing objects required for qb-blackjack!", nil, true)
