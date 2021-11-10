@@ -221,7 +221,7 @@ AddEventHandler("BLACKJACK:CheckPlayerBet", CheckPlayerBet)
 RegisterServerEvent("BLACKJACK:ReceivedMove")
 
 function StartTableThread(i)
-	Citizen.CreateThread(function()
+	CreateThread(function()
 		local index = i
 		-- DebugPrint(index)
 		while true do Wait(0)
@@ -825,7 +825,7 @@ function StartTableThread(i)
 	end)
 end
 
-Citizen.CreateThread(function() -- INIT
+CreateThread(function() -- INIT
 	for i,_ in pairs(tables) do
 		StartTableThread(i)
 		players[i] = {}
@@ -848,7 +848,7 @@ function PlayerSatDown(i, seat)
 
 	-- DebugPrint(#players[i])
 
-	-- Citizen.CreateThread(function()
+	-- CreateThread(function()
 		-- local deck = getDeck()
 
 		-- local card1 = takeCard(deck)

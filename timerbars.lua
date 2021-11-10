@@ -34,9 +34,9 @@ function DrawTimerProgressBar(idx, title, progress, titleColor, fgColor, bgColor
         RequestStreamedTextureDict(timerBar.txtDict, true)
 
         local t = GetGameTimer() + 5000
-        
+
         repeat
-            Citizen.Wait(0)
+            Wait(0)
         until HasStreamedTextureDictLoaded(timerBar.txtDict) or (GetGameTimer() > t)
     end
 
@@ -81,9 +81,9 @@ function DrawTimerBar(idx, title, text, titleColor, textColor, usePlayerStyle)
         RequestStreamedTextureDict(timerBar.txtDict, true)
 
         local t = GetGameTimer() + 5000
-        
+
         repeat
-            Citizen.Wait(0)
+            Wait(0)
         until HasStreamedTextureDictLoaded(timerBar.txtDict) or (GetGameTimer() > t)
     end
 
