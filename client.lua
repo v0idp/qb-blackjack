@@ -1,3 +1,4 @@
+local QBCore = exports['qb-core']:GetCoreObject()
 local seatSideAngle = 30
 local bet = 0
 local hand = {}
