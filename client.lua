@@ -1173,42 +1173,58 @@ AddEventHandler("BLACKJACK:GiveCard", function(i, seat, handSize, card, flipped,
 
 	local model = GetHashKey("vw_prop_cas_card_"..card)
 
+	if flipped == true then
+		model = GetHashKey("vw_prop_casino_cards_single")
+	end
+
 	RequestModel(model)
 	repeat Wait(0) until HasModelLoaded(model)
 
-	local card = CreateObjectNoOffset(model, tables[i].coords.x, tables[i].coords.y, tables[i].coords.z, false, false, false)
+	local entityCard = CreateObjectNoOffset(model, tables[i].coords.x, tables[i].coords.y, tables[i].coords.z, false, false, false)
 
-	spawnedObjects[#spawnedObjects+1] = card
-
-	if seat > 0 then
-		handObjs[i][seat][#handObjs[i][seat]+1] = card
-	end
-
-	AttachEntityToEntity(card, spawnedPeds[i], GetPedBoneIndex(spawnedPeds[i], 28422), 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0, 0, 0, 1, 2, 1)
+	AttachEntityToEntity(entityCard, spawnedPeds[i], GetPedBoneIndex(spawnedPeds[i], 28422), 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0, 0, 0, 1, 2, 1)
 
 	Wait(500)
 
 	Wait(800)
 
-	DetachEntity(card, 0, true)
+	DetachEntity(entityCard, 0, true)
+
+	if flipped == true then
+		local realModel = GetHashKey("vw_prop_cas_card_"..card)
+		RequestModel(realModel)
+		repeat Wait(0) until HasModelLoaded(realModel)
+
+		local cardCoords, cardRotation = GetEntityCoords(entityCard), GetEntityRotation(entityCard)
+		DeleteEntity(entityCard)
+
+		entityCard = CreateObjectNoOffset(realModel, cardCoords.x, cardCoords.y, cardCoords.z, false, false, false)
+		SetEntityRotation(entityCard, cardRotation.x, cardRotation.y, cardRotation.z, 1, 0)
+	end
+
+	spawnedObjects[#spawnedObjects+1] = entityCard
+
+	if seat > 0 then
+		handObjs[i][seat][#handObjs[i][seat]+1] = entityCard
+	end
 
 	if seat == 0 then
-		dealerHandObjs[i][#dealerHandObjs[i]+1] = card
+		dealerHandObjs[i][#dealerHandObjs[i]+1] = entityCard
 
-		SetEntityCoordsNoOffset(card, GetObjectOffsetFromCoords(tables[i].coords.x, tables[i].coords.y, tables[i].coords.z, tables[i].coords.w, cardOffsetsDealer[handSize]))
+		SetEntityCoordsNoOffset(entityCard, GetObjectOffsetFromCoords(tables[i].coords.x, tables[i].coords.y, tables[i].coords.z, tables[i].coords.w, cardOffsetsDealer[handSize]))
 
 		if flipped == true then
-			SetEntityRotation(card, 180.0, 0.0, tables[i].coords.w + cardRotationOffsetsDealer[handSize].z)
+			SetEntityRotation(entityCard, 180.0, 0.0, tables[i].coords.w + cardRotationOffsetsDealer[handSize].z)
 		else
-			SetEntityRotation(card, 0.0, 0.0, tables[i].coords.w + cardRotationOffsetsDealer[handSize].z)
+			SetEntityRotation(entityCard, 0.0, 0.0, tables[i].coords.w + cardRotationOffsetsDealer[handSize].z)
 		end
 	else
 		if split == true then
-			SetEntityCoordsNoOffset(card, GetObjectOffsetFromCoords(tables[i].coords.x, tables[i].coords.y, tables[i].coords.z, tables[i].coords.w, cardSplitOffsets[5-seat][handSize]))
-			SetEntityRotation(card, 0.0, 0.0, tables[i].coords.w + cardSplitRotationOffsets[5-seat][handSize])
+			SetEntityCoordsNoOffset(entityCard, GetObjectOffsetFromCoords(tables[i].coords.x, tables[i].coords.y, tables[i].coords.z, tables[i].coords.w, cardSplitOffsets[5-seat][handSize]))
+			SetEntityRotation(entityCard, 0.0, 0.0, tables[i].coords.w + cardSplitRotationOffsets[5-seat][handSize])
 		else
-			SetEntityCoordsNoOffset(card, GetObjectOffsetFromCoords(tables[i].coords.x, tables[i].coords.y, tables[i].coords.z, tables[i].coords.w, cardOffsets[5-seat][handSize]))
-			SetEntityRotation(card, 0.0, 0.0, tables[i].coords.w + cardRotationOffsets[5-seat][handSize])
+			SetEntityCoordsNoOffset(entityCard, GetObjectOffsetFromCoords(tables[i].coords.x, tables[i].coords.y, tables[i].coords.z, tables[i].coords.w, cardOffsets[5-seat][handSize]))
+			SetEntityRotation(entityCard, 0.0, 0.0, tables[i].coords.w + cardRotationOffsets[5-seat][handSize])
 			textCoords = GetObjectOffsetFromCoords(tables[i].coords.x, tables[i].coords.y, tables[i].coords.z, tables[i].coords.w, cardOffsets[5-seat][handSize])
 		end
 	end
